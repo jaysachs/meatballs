@@ -1,3 +1,7 @@
+/*
+ * Copyright 2002 Jay Sachs (jay@covariant.org)
+ */
+
 import java.util.*;
 
 public abstract class Races<Player extends Enum<?>> {
@@ -106,7 +110,7 @@ public abstract class Races<Player extends Enum<?>> {
       returns.put(winner.get(2), returns.get(winner.get(2)) - BET);
       returns.put(winner.get(3), returns.get(winner.get(3)) - BET);
       for (Player p : players) {
-	if (winner.indexOf(p) < winner.indexOf(p)) {
+	if (winner.indexOf(p) < winner.indexOf(players.get(3))) {
 	  returns.put(p, returns.get(p) + 5 * bonus);
 	}
       }
