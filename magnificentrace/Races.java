@@ -8,12 +8,13 @@ public abstract class Races<Player extends Enum<?>> {
 
   private static final int SPACES = 49;
   private static int RUNS = 1000;
-  private static int BET = 4;
+  private static int BET = 2;
 
   private final Random rand = new Random();
   private final Map<Player, Integer> loc = new HashMap<>();
   private final List<Player> players;
   private final int bonus;
+  private final Map<Player, Integer> rows = new HashMap<>();
   
   protected Races(Class<Player> clz, int bonus) {
     try {
@@ -28,6 +29,17 @@ public abstract class Races<Player extends Enum<?>> {
     return rand.nextInt(faces) + 1;
   }
 
+  protected void moveRow(Player p, int delta) {
+    int result = rows.get(p) + delta;
+    if (result < 0) {
+      result = 0;
+    }
+    if (result >= players.size()) {
+      result = players.size() - 1;
+    }
+    rows.put(p, result);
+  }
+  
   protected int move(Player p, int spaces) {
     int result = loc.get(p) + spaces;
     if (result < 0) {
@@ -42,6 +54,7 @@ public abstract class Races<Player extends Enum<?>> {
   List<Player> oneRace() {
     for (Player p : players) {
       loc.put(p, 0);
+      rows.put(p, p.ordinal());
     }
 
     while (true) {
@@ -75,8 +88,11 @@ public abstract class Races<Player extends Enum<?>> {
     return loc.get(p);
   }
 
+  protected int row(Player p) {
+    return rows.get(p);
+  }
+
   private List<Player> checkWin() {
-    // System.out.println(loc);
     if (loc.values().stream().allMatch(x -> x <= SPACES)) {
       return null;
     }
@@ -86,7 +102,7 @@ public abstract class Races<Player extends Enum<?>> {
 		       int p1 = loc.get(x);
 		       int p2 = loc.get(y);
 		       if (p1 == p2) {
-			 return y.ordinal() - x.ordinal();
+			 return rows.get(y) - rows.get(x);
 		       }
 		       return p2 - p1;
 		     });
@@ -290,7 +306,16 @@ public abstract class Races<Player extends Enum<?>> {
       case Twonky: {
 	int i = roll(6);
 	move(p, i);
-	//
+	moveRow(p, (i % 2 == 0) ? -1 : 1);
+	// fire lasers
+	for (Player x : Player.values()) {
+	  if (x != p && row(x) == row(p)) {
+	    int y = move(x, -2);
+	    if (y == location(p)) {
+	      move(x, -1);
+	    }
+	  }
+	}
       }
 	break;
       case Squashbot: {
