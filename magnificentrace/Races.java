@@ -266,9 +266,53 @@ public abstract class Races<Player extends Enum<?>> {
     }
   }
 
+  static class RoboRally extends Races<RoboRally.Player> {
+    enum Player {
+      Hammerbot,
+      Twonky,
+      Squashbot,
+      Dan
+    }
+
+    RoboRally() {
+      super(Player.class, 4);
+    }
+
+    @Override
+    protected void handle(Player p) {
+      switch (p) {
+      case Hammerbot:
+	switch (roll(4)) {
+	case 1: move(p, 1); break;
+	case 4: move(p, 13); break;
+	}
+	break;
+      case Twonky: {
+	int i = roll(6);
+	move(p, i);
+	//
+      }
+	break;
+      case Squashbot: {
+	int i = roll(8);
+	if (i < 8) {
+	  move(p, i);
+	} else {
+	  move(p, 3);
+	  move(Player.Dan, -8);
+	}
+      }
+	break;
+      case Dan:
+	move(p, 4);
+      }
+    }
+  }
+
   public static void main(String[] args) {
     new HareAndTortoise().run();
     new MagicalAthletes().run();
     new FormulaD().run();
+    new RoboRally().run();
   }
 }
