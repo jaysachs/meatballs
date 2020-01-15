@@ -51,6 +51,9 @@ public abstract class Races<Player extends Enum<?>> {
 
   abstract protected void handle(Player p);
 
+  protected void postMoves() {
+  }
+  
   List<Player> oneRace() {
     for (Player p : players) {
       loc.put(p, 0);
@@ -59,9 +62,9 @@ public abstract class Races<Player extends Enum<?>> {
 
     while (true) {
       for (Player p : players) {
-	// System.out.println(p);
 	handle(p);
       }
+      postMoves();
       List<Player> winner = checkWin();
       if (winner != null) {
 	return winner;
@@ -330,6 +333,15 @@ public abstract class Races<Player extends Enum<?>> {
 	break;
       case Dan:
 	move(p, 4);
+      }
+    }
+    @Override protected void postMoves() {
+      for (Player x : Player.values()) {
+	if (x != Player.Twonky && row(x) == row(Player.Twonky)) {
+	  if (location(x) == location(Player.Twonky)) {
+	    move(x, -1);
+	  }
+	}
       }
     }
   }
