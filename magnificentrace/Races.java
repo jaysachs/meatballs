@@ -7,7 +7,7 @@ import java.util.*;
 public abstract class Races<Player extends Enum<?>> {
 
   private static final int SPACES = 49;
-  private static int RUNS = 1000;
+  private static int RUNS = 10000;
   private static int BET = 2;
 
   private final Random rand = new Random();
