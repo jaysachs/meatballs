@@ -314,9 +314,6 @@ public abstract class Races<Player extends Enum<?>> {
 	for (Player x : Player.values()) {
 	  if (x != p && row(x) == row(p)) {
 	    int y = move(x, -2);
-	    if (y == location(p)) {
-	      move(x, -1);
-	    }
 	  }
 	}
       }
