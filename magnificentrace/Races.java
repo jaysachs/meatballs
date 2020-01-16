@@ -6,23 +6,35 @@ import java.util.*;
 
 public abstract class Races<Player extends Enum<?>> {
 
-  private static final int SPACES = 49;
-  private static int RUNS = 10000;
-  private static int BET = 2;
-
   private final Random rand = new Random();
   private final Map<Player, Integer> loc = new HashMap<>();
   private final List<Player> players;
-  private final int bonus;
   private final Map<Player, Integer> rows = new HashMap<>();
+  private final Options options;
   
-  protected Races(Class<Player> clz, int bonus) {
+  static class Options {
+    Options(int runs, int bet, int spaces, int bonus) {
+      this.bet = bet;
+      this.spaces = spaces;
+      this.runs = runs;
+      this.bonus = bonus;
+    }
+    Options withBonus(int bonus) {
+      return new Options(runs, bet, spaces, bonus);
+    }
+    private final int bet;
+    private final int runs;
+    private final int spaces;
+    private final int bonus;
+  }
+  
+  protected Races(Class<Player> clz, Options options) {
     try {
       players = Arrays.asList((Player[]) clz.getMethod("values").invoke(null));
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-    this.bonus = bonus;
+    this.options = options;
   }
   
   protected int roll(int faces) {
@@ -73,7 +85,7 @@ public abstract class Races<Player extends Enum<?>> {
   }
 
   protected Player last() {
-    int m = SPACES * 20;
+    int m = options.spaces * 20;
     Player result = null;
     for (Player p : players) {
       if (loc.get(p) <= m) {
@@ -96,7 +108,7 @@ public abstract class Races<Player extends Enum<?>> {
   }
 
   private List<Player> checkWin() {
-    if (loc.values().stream().allMatch(x -> x <= SPACES)) {
+    if (loc.values().stream().allMatch(x -> x < options.spaces)) {
       return null;
     }
     List places = new ArrayList<>(players);
@@ -121,21 +133,21 @@ public abstract class Races<Player extends Enum<?>> {
     for (Player p : players) {
       returns.put(p, 0.0);
     }
-    for (int i = 0; i < RUNS; i++) {
+    for (int i = 0; i < options.runs; i++) {
       List<Player> winner = oneRace();
       wins.put(winner.get(0), wins.get(winner.get(0)) + 1);
       
-      returns.put(winner.get(0), returns.get(winner.get(0)) + 2 * BET);
-      returns.put(winner.get(2), returns.get(winner.get(2)) - BET);
-      returns.put(winner.get(3), returns.get(winner.get(3)) - BET);
+      returns.put(winner.get(0), returns.get(winner.get(0)) + 2 * options.bet);
+      returns.put(winner.get(2), returns.get(winner.get(2)) - options.bet);
+      returns.put(winner.get(3), returns.get(winner.get(3)) - options.bet);
       for (Player p : players) {
 	if (winner.indexOf(p) < winner.indexOf(players.get(3))) {
-	  returns.put(p, returns.get(p) + 5 * bonus);
+	  returns.put(p, returns.get(p) + 5 * options.bonus);
 	}
       }
     }
     for (Player p : players) {
-      returns.put(p, returns.get(p) / RUNS);
+      returns.put(p, returns.get(p) / options.runs);
     }
     String name = getClass().getName();
     System.out.println(name.substring(name.indexOf('$')+1) + ":");
@@ -151,8 +163,8 @@ public abstract class Races<Player extends Enum<?>> {
       Dan
     };
 
-    HareAndTortoise() {
-      super(Player.class, 1);
+    HareAndTortoise(Options options) {
+      super(Player.class, options);
     }
 
     @Override
@@ -191,8 +203,8 @@ public abstract class Races<Player extends Enum<?>> {
       Dan
     };
 
-    MagicalAthletes() {
-      super(Player.class, 2);
+    MagicalAthletes(Options options) {
+      super(Player.class, options);
     }
     
     @Override
@@ -246,8 +258,8 @@ public abstract class Races<Player extends Enum<?>> {
     private int yellowspeed = 0;
     private int redgear = 4;
 
-    FormulaD() {
-      super(Player.class, 3);
+    FormulaD(Options options) {
+      super(Player.class, options);
     }
 
     @Override
@@ -293,8 +305,8 @@ public abstract class Races<Player extends Enum<?>> {
       Dan
     }
 
-    RoboRally() {
-      super(Player.class, 4);
+    RoboRally(Options options) {
+      super(Player.class, options);
     }
 
     @Override
@@ -343,10 +355,35 @@ public abstract class Races<Player extends Enum<?>> {
     }
   }
 
+  static Options parseOptions(String[] args) {
+    List<String> a = new ArrayList<>(Arrays.asList(args));
+    int runs = 10000;
+    int spaces = 50;
+    int bonus = 5;
+    int bet = 1;
+    if (!a.isEmpty()) {
+      runs = Integer.valueOf(a.remove(0));
+    }
+    if (!a.isEmpty()) {
+      spaces = Integer.valueOf(a.remove(0));
+    }
+    if (!a.isEmpty()) {
+      bonus = Integer.valueOf(a.remove(0));
+    }
+    if (!a.isEmpty()) {
+      bet = Integer.valueOf(a.remove(0));
+    }
+    if (!a.isEmpty()) {
+      throw new RuntimeException("too many arguments");
+    }
+    return new Options(runs, bet, spaces, bet);
+  }
+
   public static void main(String[] args) {
-    new HareAndTortoise().run();
-    new MagicalAthletes().run();
-    new FormulaD().run();
-    new RoboRally().run();
+    Options options = parseOptions(args);
+    new HareAndTortoise(options).run();
+    new MagicalAthletes(options.withBonus(10)).run();
+    new FormulaD(options.withBonus(15)).run();
+    new RoboRally(options.withBonus(20)).run();
   }
 }
