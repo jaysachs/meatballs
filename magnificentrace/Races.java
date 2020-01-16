@@ -382,8 +382,11 @@ public abstract class Races<Player extends Enum<?>> {
   public static void main(String[] args) {
     Options options = parseOptions(args);
     new HareAndTortoise(options).run();
-    new MagicalAthletes(options.withBonus(10)).run();
-    new FormulaD(options.withBonus(15)).run();
-    new RoboRally(options.withBonus(20)).run();
+    System.out.println();
+    new MagicalAthletes(options.withBonus(options.bonus * 2)).run();
+    System.out.println();
+    new FormulaD(options.withBonus(options.bonus * 3)).run();
+    System.out.println();
+    new RoboRally(options.withBonus(options.bonus * 4)).run();
   }
 }
