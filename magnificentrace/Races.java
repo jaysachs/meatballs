@@ -1,5 +1,5 @@
 /*
- * Copyright 2002 Jay Sachs (jay@covariant.org)
+ * Copyright 2020 Jay Sachs (jay@covariant.org)
  */
 
 import java.util.*;
