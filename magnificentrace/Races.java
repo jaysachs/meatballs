@@ -27,7 +27,8 @@ public abstract class Races<Player extends Enum<?>> {
     private final int spaces;
     private final int bonus;
   }
-  
+
+  @SuppressWarnings("unchecked")
   protected Races(Class<Player> clz, Options options) {
     try {
       players = Arrays.asList((Player[]) clz.getMethod("values").invoke(null));
@@ -111,7 +112,7 @@ public abstract class Races<Player extends Enum<?>> {
     if (loc.values().stream().allMatch(x -> x < options.spaces)) {
       return null;
     }
-    List places = new ArrayList<>(players);
+    List<Player> places = new ArrayList<>(players);
     Collections.sort(places,
 		     (Player x, Player y) -> {
 		       int p1 = loc.get(x);
