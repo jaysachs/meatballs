@@ -1,5 +1,17 @@
 /*
  * Copyright 2020 Jay Sachs (jay@covariant.org)
+ *
+ * Build instructions:
+ *   javac Races.java
+ * 
+ * Run it:
+ *   java Races [ iterations [ tracklength [ bonus [ bet ] ] ] ]
+ * e.g. run with defaults (1000, 50, 5, 5)
+ *   java Races
+ * or run with 10000 iterations and track length 500:
+ *   java Races 10000 500
+ * or specify them all
+ *   java Races 100 50 5 7
  */
 
 import java.util.*;
