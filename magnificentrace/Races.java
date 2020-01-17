@@ -358,10 +358,10 @@ public abstract class Races<Player extends Enum<?>> {
     }
     @Override protected void postMoves() {
       for (Player x : Player.values()) {
-	if (x != Player.Twonky && row(x) == row(Player.Twonky)) {
-	  if (location(x) == location(Player.Twonky)) {
-	    move(x, -1);
-	  }
+	if (x != Player.Twonky
+	    && row(x) == row(Player.Twonky)
+	    && location(x) == location(Player.Twonky)) {
+	  move(x, -1);
 	}
       }
     }
