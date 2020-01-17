@@ -45,10 +45,9 @@ public abstract class Races<Player extends Enum<?>> {
   protected void moveRow(Player p, int delta) {
     int result = rows.get(p) + delta;
     if (result < 0) {
+      result = rows.size() - 1;
+    } else if (result == rows.size()) {
       result = 0;
-    }
-    if (result >= players.size()) {
-      result = players.size() - 1;
     }
     rows.put(p, result);
   }
